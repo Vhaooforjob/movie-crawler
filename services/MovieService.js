@@ -45,13 +45,16 @@ class MovieService {
                 }
     
                 console.log(`✅ Saved movie: ${item.name}`);
-    
                 return {
                     slug: item.slug,
                     name: item.name,
                     origin_name: item.origin_name,
-                    poster_url: item.poster_url,
-                    thumb_url: item.thumb_url,
+                    poster_url: item.poster_url?.startsWith("http") 
+                        ? item.poster_url 
+                        : `${process.env.API_IMAGE_URL}/${item.poster_url}`,
+                    thumb_url: item.thumb_url?.startsWith("http") 
+                        ? item.thumb_url 
+                        : `${process.env.API_IMAGE_URL}/${item.thumb_url}`,
                     year: item.year,
                     category: Array.isArray(item.category) 
                         ? item.category.map(c => c.name).join(", ")  
@@ -88,8 +91,12 @@ class MovieService {
                     slug: item.slug,
                     name: item.name,
                     origin_name: item.origin_name,
-                    poster_url: item.poster_url,
-                    thumb_url: item.thumb_url,
+                    poster_url: item.poster_url?.startsWith("http") 
+                        ? item.poster_url 
+                        : `${process.env.API_IMAGE_URL}/${item.poster_url}`,
+                    thumb_url: item.thumb_url?.startsWith("http") 
+                        ? item.thumb_url 
+                        : `${process.env.API_IMAGE_URL}/${item.thumb_url}`,
                     year: item.year,
                     category: Array.isArray(item.category) 
                         ? item.category.map(c => c.name).join(", ")  
