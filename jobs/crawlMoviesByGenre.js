@@ -33,13 +33,22 @@ const crawlMoviesByGenre = async () => {
     try {
         for (const genre of genres) {
             console.log(`🔍 Crawling genre: ${genre.slug}`);
+
             const movies = await MovieService.fetchMoviesGenres({ type_list: genre.slug });
-            await MovieService.saveMovies(movies);
+            console.log(`📥 Fetched ${movies.length} movies for genre`);
+
+            if (movies.length > 0) {
+                await MovieService.saveMovies(movies);
+                console.log(`✅ Saved ${movies.length} movies for genre: ${genre.slug}`);
+            } else {
+                console.log(`⚠️ No movies found for genre: ${genre.slug}`);
+            }
         }
         console.log("✅ Successfully crawled movies by genre!");
     } catch (error) {
-        console.error("❌ Error in crawlMoviesByGenre:", error.message);
+        console.error("❌ Error in crawlMoviesByGenre:", error);
     }
 };
+
 
 module.exports = crawlMoviesByGenre;

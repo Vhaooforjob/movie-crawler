@@ -36,19 +36,32 @@ class MovieService {
             console.log(`🔍 Fetching movies from: ${apiUrl}`);
 
             const { data } = await axios.get(apiUrl);
-            if (!data || !data.items) return [];
+            if (!data || !data.data || !data.data.items) return [];
 
-            return data.items.map((item) => ({
-                slug: item.slug,
-                name: item.name,
-                origin_name: item.origin_name,
-                poster_url: item.poster_url,
-                thumb_url: item.thumb_url,
-                year: item.year,
-                category: item.category || [],
-                country: item.country || "",
-                modified_time: new Date(item.modified.time),
-            }));
+            return data.data.items.map((item) => {
+                if (!item.name) {
+                    console.log(`⏩ Skipped movie: Missing name`);
+                    return null;
+                }
+    
+                console.log(`✅ Saved movie: ${item.name}`);
+    
+                return {
+                    slug: item.slug,
+                    name: item.name,
+                    origin_name: item.origin_name,
+                    poster_url: item.poster_url,
+                    thumb_url: item.thumb_url,
+                    year: item.year,
+                    category: Array.isArray(item.category) 
+                        ? item.category.map(c => c.name).join(", ")  
+                        : "",
+                    country: Array.isArray(item.country) && item.country.length > 0 
+                        ? item.country[0].name  
+                        : "",
+                    modified_time: new Date(item.modified.time),
+                };
+            }).filter(Boolean);
         } catch (error) {
             console.error("❌ Error fetching movies:", error.message);
             return [];
@@ -59,26 +72,40 @@ class MovieService {
         try {
             const apiUrl = `${process.env.API_URL}/the-loai/${type_list}`;
             console.log(`🔍 Fetching movies from: ${apiUrl}`);
-
+    
             const { data } = await axios.get(apiUrl);
-            if (!data || !data.items) return [];
-
-            return data.items.map((item) => ({
-                slug: item.slug,
-                name: item.name,
-                origin_name: item.origin_name,
-                poster_url: item.poster_url,
-                thumb_url: item.thumb_url,
-                year: item.year,
-                category: item.category || [],
-                country: item.country || "",
-                modified_time: new Date(item.modified.time),
-            }));
+            if (!data || !data.data || !data.data.items) return [];
+    
+            return data.data.items.map((item) => {
+                if (!item.name) {
+                    console.log(`⏩ Skipped movie: Missing name`);
+                    return null;
+                }
+    
+                console.log(`✅ Saved movie: ${item.name}`);
+    
+                return {
+                    slug: item.slug,
+                    name: item.name,
+                    origin_name: item.origin_name,
+                    poster_url: item.poster_url,
+                    thumb_url: item.thumb_url,
+                    year: item.year,
+                    category: Array.isArray(item.category) 
+                        ? item.category.map(c => c.name).join(", ")  
+                        : "",
+                    country: Array.isArray(item.country) && item.country.length > 0 
+                        ? item.country[0].name  
+                        : "",
+                    modified_time: new Date(item.modified.time),
+                };
+            }).filter(Boolean);
         } catch (error) {
             console.error("❌ Error fetching movies:", error.message);
             return [];
         }
     }
+     
 
     static async saveMovies(movies) {
         for (const movie of movies) {

@@ -7,8 +7,16 @@ const crawlMoviesByCategory = async () => {
     try {
         for (const category of categories) {
             console.log(`🔍 Crawling category: ${category}`);
+
             const movies = await MovieService.fetchMoviesCate({ type_list: category });
-            await MovieService.saveMovies(movies);
+            console.log(`📥 Fetched ${movies.length} movies for category`);
+            
+            if (movies.length > 0) {
+                await MovieService.saveMovies(movies);
+                console.log(`✅ Completed ${movies.length} movies for category: ${category}`);
+            } else {
+                console.log(`⚠️ No movies found for category: ${category}`);
+            }
         }
         console.log("✅ Successfully crawled movies by category!");
     } catch (error) {
