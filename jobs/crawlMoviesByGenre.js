@@ -1,4 +1,5 @@
 const MovieService = require("../services/MovieService");
+const fetchAndStoreMovieFunc = require("../utils/updateMovieDetail");
 
 const genres = [
     { name: "Hành Động", slug: "hanh-dong" },
@@ -29,24 +30,25 @@ const genres = [
 ];
 
 const crawlMoviesByGenre = async () => {
-    console.log("🚀 Crawling movies by genre...");
+    console.log("Crawling movies by genre...");
     try {
         for (const genre of genres) {
-            console.log(`🔍 Crawling genre: ${genre.slug}`);
+            console.log(`Crawling genre: ${genre.slug}`);
 
             const movies = await MovieService.fetchMoviesGenres({ type_list: genre.slug });
-            console.log(`📥 Fetched ${movies.length} movies for genre`);
+            console.log(`Fetched ${movies.length} movies for genre`);
 
             if (movies.length > 0) {
                 await MovieService.saveMovies(movies);
-                console.log(`✅ Saved ${movies.length} movies for genre: ${genre.slug}`);
+                console.log(`Saved ${movies.length} movies for genre: ${genre.slug}`);
+                await fetchAndStoreMovieFunc.fetchAndStoreMovies(movies);
             } else {
-                console.log(`⚠️ No movies found for genre: ${genre.slug}`);
+                console.log(`No movies found for genre: ${genre.slug}`);
             }
         }
-        console.log("✅ Successfully crawled movies by genre!");
+        console.log("Successfully crawled movies by genre!");
     } catch (error) {
-        console.error("❌ Error in crawlMoviesByGenre:", error);
+        console.error("Error in crawlMoviesByGenre:", error);
     }
 };
 
